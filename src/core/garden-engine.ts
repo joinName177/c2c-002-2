@@ -1,5 +1,6 @@
-import type { Emotion, EmotionEntry, GardenSnapshot, GrowthStage, Plant } from './models';
+import type { Emotion, EmotionEntry, GardenSnapshot, GrowthStage, Plant, Reminder } from './models';
 import { EMOTION_META, EMOTIONS } from './models';
+import { createReminder } from './reminder-engine';
 
 const day = 86400000;
 export function stageFor(streak: number): GrowthStage { if (streak >= 14) return '结果'; if (streak >= 7) return '开花'; if (streak >= 3) return '发芽'; return '种子'; }
@@ -34,5 +35,6 @@ export function sampleSnapshot(): GardenSnapshot {
   const today = new Date(); const entries: EmotionEntry[] = [];
   const seed: Emotion[] = ['喜悦', '喜悦', '平静', '平静', '平静', '平静', '喜悦', '忧伤', '焦虑', '平静', '喜悦'];
   seed.forEach((emotion, index) => { const date = new Date(today.getTime() - (seed.length - index - 1) * day).toISOString().slice(0, 10); entries.push(createEntry(emotion, index % 2 ? '今天注意到了自己的节奏。' : '给这一天留下一颗种子。', (index % 5) + 1, date)); });
-  return { entries, plants: syncPlants(entries) };
+  const reminders: Reminder[] = [createReminder('21:00', '平静')];
+  return { entries, plants: syncPlants(entries), reminders, todos: [] };
 }
